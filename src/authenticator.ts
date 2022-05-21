@@ -17,10 +17,13 @@ interface AuthenticatorProperties {
 
 export class Authenticator {
   constructor(private props: AuthenticatorProperties) {}
-  public async authenticate(username: string, password: string): Promise<AuthenticationResult> {
+  public async authenticate(
+    username: string,
+    password: string
+  ): Promise<AuthenticationResult> {
     const user = await this.props.userStore.getUserByName(username);
     return {
-      isAuthenticated: user !== null && user.passwordHash === password
+      isAuthenticated: user !== null && user.passwordHash === password,
     };
   }
 }
