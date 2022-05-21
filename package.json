@@ -6,12 +6,17 @@
   "scripts": {
     "test": "jest",
     "check-format": "prettier --check .",
-    "fix-format": "prettier --write ."
+    "fix-format": "prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "fix-lint": "eslint . --ext .ts --fix"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@typescript-eslint/parser": "^5.25.0",
+    "eslint": "^8.16.0",
     "jest": "^28.1.0",
     "prettier": "2.6.2",
     "ts-jest": "^28.0.2",
