@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "check-format": "prettier --check .",
     "fix-format": "prettier --write .",
     "lint": "eslint . --ext .ts",
-    "fix-lint": "eslint . --ext .ts --fix"
+    "fix-lint": "eslint . --ext .ts --fix",
+    "fix": "npm run fix-format && npm run fix-lint"
   },
   "author": "",
   "license": "ISC",
