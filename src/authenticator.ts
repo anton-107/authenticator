@@ -1,5 +1,13 @@
+import { RuntimeError } from "./runtime-error";
+
+interface SigninResult {
+  isAuthenticated: boolean;
+}
+
 interface AuthenticationResult {
   isAuthenticated: boolean;
+  username?: string;
+  errorMessage?: string;
 }
 
 export interface User {
@@ -17,13 +25,42 @@ interface AuthenticatorProperties {
 
 export class Authenticator {
   constructor(private props: AuthenticatorProperties) {}
-  public async authenticate(
+  public async signIn(
     username: string,
     password: string
-  ): Promise<AuthenticationResult> {
+  ): Promise<SigninResult> {
     const user = await this.props.userStore.getUserByName(username);
+    const isAuthenticated = user !== null && user.passwordHash === password;
     return {
-      isAuthenticated: user !== null && user.passwordHash === password,
+      isAuthenticated,
     };
+  }
+  public authenticate(userToken: string): AuthenticationResult {
+    try {
+      const username = this.readToken(userToken);
+      return {
+        isAuthenticated: true,
+        username,
+      };
+    } catch (err) {
+      return {
+        isAuthenticated: false,
+        errorMessage: String(err),
+      };
+    }
+  }
+  private readToken(userToken): string {
+    const [tokenType, token] = userToken.split(" ");
+    if (tokenType !== "usertoken") {
+      throw new RuntimeError("Token type is not supported", { tokenType });
+    }
+    if (!token || token.length === 0) {
+      throw new RuntimeError("Empty token payload", { token });
+    }
+    const parts = token.split(":");
+    if (parts.length !== 2) {
+      throw new RuntimeError("Invalid token payload", { token });
+    }
+    return parts[1];
   }
 }
