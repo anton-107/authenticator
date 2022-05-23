@@ -17,23 +17,54 @@ export interface User {
 
 export interface UserStore {
   getUserByName(username: string): Promise<User | null>;
+  addUser(user: User): Promise<void>;
+}
+
+export interface PasswordHashingFunction {
+  generateHash(password: string): Promise<string>;
+  verifyPasswordHash(password: string, passwordHash: string): Promise<boolean>;
 }
 
 interface AuthenticatorProperties {
   userStore: UserStore;
+  passwordHashingFunction: PasswordHashingFunction;
 }
 
 export class Authenticator {
   constructor(private props: AuthenticatorProperties) {}
+  public async addUser(username: string, password: string): Promise<void> {
+    this.props.userStore.addUser({
+      username,
+      passwordHash: await this.props.passwordHashingFunction.generateHash(
+        password
+      ),
+    });
+  }
   public async signIn(
     username: string,
     password: string
   ): Promise<SigninResult> {
     const user = await this.props.userStore.getUserByName(username);
-    const isAuthenticated = user !== null && user.passwordHash === password;
-    return {
-      isAuthenticated,
-    };
+    if (!user) {
+      return {
+        isAuthenticated: false,
+      };
+    }
+    try {
+      const isAuthenticated =
+        await this.props.passwordHashingFunction.verifyPasswordHash(
+          password,
+          user.passwordHash
+        );
+      return {
+        isAuthenticated,
+      };
+    } catch (err) {
+      console.error("Error verifying hash", err);
+      return {
+        isAuthenticated: false,
+      };
+    }
   }
   public authenticate(userToken: string): AuthenticationResult {
     try {
