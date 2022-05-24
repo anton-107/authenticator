@@ -2,6 +2,7 @@ import { RuntimeError } from "./runtime-error";
 
 interface SigninResult {
   isAuthenticated: boolean;
+  accessToken?: string;
 }
 
 interface AuthenticationResult {
@@ -25,9 +26,15 @@ export interface PasswordHashingFunction {
   verifyPasswordHash(password: string, passwordHash: string): Promise<boolean>;
 }
 
+export interface AuthTokensSerializer {
+  generateAccessToken(username: string): Promise<string>;
+  decodeAccessToken(accessToken: string): Promise<string>;
+}
+
 interface AuthenticatorProperties {
   userStore: UserStore;
   passwordHashingFunction: PasswordHashingFunction;
+  authTokensSerializer: AuthTokensSerializer;
 }
 
 export class Authenticator {
@@ -56,42 +63,49 @@ export class Authenticator {
           password,
           user.passwordHash
         );
+      if (!isAuthenticated) {
+        return {
+          isAuthenticated: false,
+        };
+      }
+      const accessToken =
+        await this.props.authTokensSerializer.generateAccessToken(username);
       return {
-        isAuthenticated,
+        isAuthenticated: true,
+        accessToken: `jwt ${accessToken}`,
       };
     } catch (err) {
-      console.error("Error verifying hash", err);
+      console.error("Error verifying hash or generating access token", err);
       return {
         isAuthenticated: false,
       };
     }
   }
-  public authenticate(userToken: string): AuthenticationResult {
+  public async authenticate(
+    accessToken: string
+  ): Promise<AuthenticationResult> {
     try {
-      const username = this.readToken(userToken);
+      const username = await this.readToken(accessToken);
       return {
         isAuthenticated: true,
         username,
       };
     } catch (err) {
+      console.error("Authentication error", err);
       return {
         isAuthenticated: false,
         errorMessage: String(err),
       };
     }
   }
-  private readToken(userToken): string {
-    const [tokenType, token] = userToken.split(" ");
-    if (tokenType !== "usertoken") {
+  private async readToken(accessToken: string): Promise<string> {
+    const [tokenType, token] = accessToken.split(" ");
+    if (tokenType !== "jwt") {
       throw new RuntimeError("Token type is not supported", { tokenType });
     }
     if (!token || token.length === 0) {
       throw new RuntimeError("Empty token payload", { token });
     }
-    const parts = token.split(":");
-    if (parts.length !== 2) {
-      throw new RuntimeError("Invalid token payload", { token });
-    }
-    return parts[1];
+    return await this.props.authTokensSerializer.decodeAccessToken(token);
   }
 }
