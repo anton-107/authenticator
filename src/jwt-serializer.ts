@@ -10,7 +10,10 @@ export class JWTSerializer implements AuthTokensSerializer {
         this.secretKey,
         { expiresIn: 15 * 60 },
         (err, token) => {
-          console.log("jwt sign result", err);
+          console.log(
+            "jwt sign result error (it is error only if not null):",
+            err
+          );
           resolve(token);
         }
       );
