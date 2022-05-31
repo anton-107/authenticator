@@ -1,12 +1,15 @@
 import { Argon2HashingFunction } from "../src/argon2-hashing";
 import { Authenticator, User, UserStore } from "../src/authenticator";
-import { JWTSerializer } from "../src/jwt-serializer";
+import {
+  JWTSerializer,
+  StandardJwtImplementation,
+} from "../src/jwt-serializer";
 
 class TestUserStore implements UserStore {
   private users: User[] = [];
 
   public async getUserByName(username: string): Promise<User | null> {
-    return this.users.find((u) => u.username === username);
+    return this.users.find((u) => u.username === username) || null;
   }
   public async addUser(user: User): Promise<void> {
     this.users.push(user);
@@ -14,7 +17,10 @@ class TestUserStore implements UserStore {
 }
 const userStore = new TestUserStore();
 const passwordHashingFunction = new Argon2HashingFunction();
-const authTokensSerializer = new JWTSerializer("some-secret-key");
+const authTokensSerializer = new JWTSerializer(
+  new StandardJwtImplementation(),
+  "some-secret-key"
+);
 
 describe("authentication", () => {
   beforeAll(async () => {
@@ -33,12 +39,14 @@ describe("authentication", () => {
     });
     await a.addUser("user2", "some-random-password");
     const u = await userStore.getUserByName("user2");
-    expect(u.passwordHash).toContain("$argon2i$v=19$m=4096");
+    expect(u).not.toBeNull();
+    expect((u as User).passwordHash).toContain("$argon2i$v=19$m=4096");
     const user = await a.signIn("user2", "some-random-password");
     expect(user.isAuthenticated).toBe(true);
     expect(user.accessToken).toBeTruthy();
     expect(user.accessToken).toContain("jwt ");
-    const authResult = await a.authenticate(user.accessToken);
+    expect(user.accessToken).not.toBeUndefined();
+    const authResult = await a.authenticate(user.accessToken as string);
     expect(authResult.isAuthenticated).toBe(true);
     expect(authResult.username).toBe("user2");
   });
@@ -77,8 +85,8 @@ describe("authentication", () => {
     });
     const signIn = await a.signIn("user1", "1234");
     expect(signIn.isAuthenticated).toBe(true);
-    expect(signIn.accessToken).toBeTruthy();
-    const user = await a.authenticate(signIn.accessToken);
+    expect(signIn.accessToken).not.toBeUndefined();
+    const user = await a.authenticate(signIn.accessToken as string);
     expect(user.isAuthenticated).toBe(true);
     expect(user.username).toBe("user1");
   });
@@ -89,7 +97,8 @@ describe("authentication", () => {
       authTokensSerializer,
     });
     const signIn = await a.signIn("user2", "some-random-password");
-    const user = await a.authenticate(signIn.accessToken);
+    expect(signIn.accessToken).not.toBeUndefined();
+    const user = await a.authenticate(signIn.accessToken as string);
     expect(user.isAuthenticated).toBe(true);
     expect(user.username).toBe("user2");
   });

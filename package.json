@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf dist/ && tsc",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "check-format": "prettier --check .",
@@ -24,6 +25,7 @@
     "jest": "^28.1.0",
     "prettier": "2.6.2",
     "ts-jest": "^28.0.2",
+    "ts-mockito": "^2.6.1",
     "typescript": "^4.6.4"
   },
   "dependencies": {
