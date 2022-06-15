@@ -71,6 +71,9 @@ Object.keys(hashingFunctions).forEach((k) => {
       });
       const user = await a.signIn("user0", "1234");
       expect(user.isAuthenticated).toBe(false);
+      expect(user.authenticationFailedReason).toBe(
+        "User with name 'user0' is not found"
+      );
     });
     it("should sign in a user coming with a correct password", async () => {
       const a = new Authenticator({
@@ -89,6 +92,9 @@ Object.keys(hashingFunctions).forEach((k) => {
       });
       const user = await a.signIn("user1", "5678");
       expect(user.isAuthenticated).toBe(false);
+      expect(user.authenticationFailedReason).toBe(
+        "User 'user1' is found, but the given password of length(4) is incorrect"
+      );
     });
     it("should authenticate a valid user token for user1", async () => {
       const a = new Authenticator({

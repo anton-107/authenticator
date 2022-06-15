@@ -3,6 +3,7 @@ import { RuntimeError } from "./runtime-error";
 interface SigninResult {
   isAuthenticated: boolean;
   accessToken?: string;
+  authenticationFailedReason?: string;
 }
 
 interface AuthenticationResult {
@@ -55,6 +56,7 @@ export class Authenticator {
     if (!user) {
       return {
         isAuthenticated: false,
+        authenticationFailedReason: `User with name '${username}' is not found`,
       };
     }
     try {
@@ -66,6 +68,7 @@ export class Authenticator {
       if (!isAuthenticated) {
         return {
           isAuthenticated: false,
+          authenticationFailedReason: `User '${username}' is found, but the given password of length(${password.length}) is incorrect`,
         };
       }
       const accessToken =

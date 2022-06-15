@@ -1,6 +1,7 @@
 interface SigninResult {
   isAuthenticated: boolean;
   accessToken?: string;
+  authenticationFailedReason?: string;
 }
 interface AuthenticationResult {
   isAuthenticated: boolean;
