@@ -8,6 +8,7 @@ import {
 } from "../src/authenticator";
 import {
   JWTSerializer,
+  SimpleStringProvider,
   StandardJwtImplementation,
 } from "../src/jwt-serializer";
 
@@ -23,7 +24,7 @@ class TestUserStore implements UserStore {
 }
 const authTokensSerializer = new JWTSerializer({
   jwt: new StandardJwtImplementation(),
-  secretKey: "some-secret-key",
+  secretKeyProvider: new SimpleStringProvider("some-secret-key"),
 });
 
 const hashingFunctions: { [name: string]: PasswordHashingFunction } = {

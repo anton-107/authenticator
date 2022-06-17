@@ -44,7 +44,10 @@ var __importStar =
     return result;
   };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JWTSerializer = exports.StandardJwtImplementation = void 0;
+exports.JWTSerializer =
+  exports.SimpleStringProvider =
+  exports.StandardJwtImplementation =
+    void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 class StandardJwtImplementation {
   sign(payload, secretOrPrivateKey, options, callback) {
@@ -55,15 +58,31 @@ class StandardJwtImplementation {
   }
 }
 exports.StandardJwtImplementation = StandardJwtImplementation;
+class SimpleStringProvider {
+  constructor(secret) {
+    this.secret = secret;
+  }
+  async getSecretKey() {
+    return this.secret;
+  }
+}
+exports.SimpleStringProvider = SimpleStringProvider;
 class JWTSerializer {
   constructor(properties) {
     this.properties = properties;
   }
   async generateAccessToken(username) {
+    let secretKey = "";
+    try {
+      secretKey = await this.properties.secretKeyProvider.getSecretKey();
+    } catch (err) {
+      console.error("Secret key provider error", err);
+      throw "Secret key provider error";
+    }
     return new Promise((resolve, reject) => {
       this.properties.jwt.sign(
         { username },
-        this.properties.secretKey,
+        secretKey,
         { expiresIn: 15 * 60 },
         (err, token) => {
           if (err) {
@@ -80,24 +99,27 @@ class JWTSerializer {
     });
   }
   async decodeAccessToken(accessToken) {
+    let secretKey = "";
+    try {
+      secretKey = await this.properties.secretKeyProvider.getSecretKey();
+    } catch (err) {
+      console.error("Secret key provider error", err);
+      throw "Secret key provider error";
+    }
     return new Promise((resolve, reject) => {
-      this.properties.jwt.verify(
-        accessToken,
-        this.properties.secretKey,
-        (err, payload) => {
-          if (err) {
-            console.error("Error decoding token", err);
-            return reject("Invalid token payload");
-          }
-          if (!payload) {
-            return reject("Empty payload");
-          }
-          if (!payload["username"]) {
-            return reject("No username in payload");
-          }
-          resolve(payload["username"]);
+      this.properties.jwt.verify(accessToken, secretKey, (err, payload) => {
+        if (err) {
+          console.error("Error decoding token", err);
+          return reject("Invalid token payload");
         }
-      );
+        if (!payload) {
+          return reject("Empty payload");
+        }
+        if (!payload["username"]) {
+          return reject("No username in payload");
+        }
+        resolve(payload["username"]);
+      });
     });
   }
 }
