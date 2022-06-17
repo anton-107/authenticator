@@ -27,10 +27,13 @@ export declare class StandardJwtImplementation implements JWT {
     callback: jwt.VerifyCallback<JwtPayload | string>
   ): void;
 }
+export interface JWTSerializerProperties {
+  jwt: JWT;
+  secretKey: string;
+}
 export declare class JWTSerializer implements AuthTokensSerializer {
-  private jwt;
-  private secretKey;
-  constructor(jwt: JWT, secretKey: string);
+  private properties;
+  constructor(properties: JWTSerializerProperties);
   generateAccessToken(username: string): Promise<string>;
   decodeAccessToken(accessToken: string): Promise<string>;
 }

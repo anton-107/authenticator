@@ -21,10 +21,10 @@ class TestUserStore implements UserStore {
     this.users.push(user);
   }
 }
-const authTokensSerializer = new JWTSerializer(
-  new StandardJwtImplementation(),
-  "some-secret-key"
-);
+const authTokensSerializer = new JWTSerializer({
+  jwt: new StandardJwtImplementation(),
+  secretKey: "some-secret-key",
+});
 
 const hashingFunctions: { [name: string]: PasswordHashingFunction } = {
   argon: new Argon2HashingFunction(),

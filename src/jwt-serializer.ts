@@ -34,13 +34,18 @@ export class StandardJwtImplementation implements JWT {
   }
 }
 
+export interface JWTSerializerProperties {
+  jwt: JWT;
+  secretKey: string;
+}
+
 export class JWTSerializer implements AuthTokensSerializer {
-  constructor(private jwt: JWT, private secretKey: string) {}
+  constructor(private properties: JWTSerializerProperties) {}
   public async generateAccessToken(username: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.jwt.sign(
+      this.properties.jwt.sign(
         { username },
-        this.secretKey,
+        this.properties.secretKey,
         { expiresIn: 15 * 60 },
         (err, token) => {
           if (err) {
@@ -58,19 +63,23 @@ export class JWTSerializer implements AuthTokensSerializer {
   }
   public async decodeAccessToken(accessToken: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.jwt.verify(accessToken, this.secretKey, (err, payload) => {
-        if (err) {
-          console.error("Error decoding token", err);
-          return reject("Invalid token payload");
+      this.properties.jwt.verify(
+        accessToken,
+        this.properties.secretKey,
+        (err, payload) => {
+          if (err) {
+            console.error("Error decoding token", err);
+            return reject("Invalid token payload");
+          }
+          if (!payload) {
+            return reject("Empty payload");
+          }
+          if (!(payload as JwtPayload)["username"]) {
+            return reject("No username in payload");
+          }
+          resolve((payload as JwtPayload)["username"]);
         }
-        if (!payload) {
-          return reject("Empty payload");
-        }
-        if (!(payload as JwtPayload)["username"]) {
-          return reject("No username in payload");
-        }
-        resolve((payload as JwtPayload)["username"]);
-      });
+      );
     });
   }
 }

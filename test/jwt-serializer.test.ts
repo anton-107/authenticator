@@ -9,7 +9,10 @@ describe("JWTSerializer", () => {
         callback("test error");
       }
     );
-    const serializer = new JWTSerializer(instance(jwt), "secret-key");
+    const serializer = new JWTSerializer({
+      jwt: instance(jwt),
+      secretKey: "secret-key",
+    });
     expect(() => serializer.generateAccessToken("user1")).rejects.toBe(
       "jwt signing failed"
     );
@@ -21,7 +24,10 @@ describe("JWTSerializer", () => {
         callback(null, undefined);
       }
     );
-    const serializer = new JWTSerializer(instance(jwt), "secret-key");
+    const serializer = new JWTSerializer({
+      jwt: instance(jwt),
+      secretKey: "secret-key",
+    });
     expect(() => serializer.generateAccessToken("user1")).rejects.toBe(
       "jwt signing failed"
     );
@@ -33,7 +39,10 @@ describe("JWTSerializer", () => {
         callback("test error", undefined);
       }
     );
-    const serializer = new JWTSerializer(instance(jwt), "secret-key");
+    const serializer = new JWTSerializer({
+      jwt: instance(jwt),
+      secretKey: "secret-key",
+    });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "Invalid token payload"
     );
@@ -45,7 +54,10 @@ describe("JWTSerializer", () => {
         callback(null, undefined);
       }
     );
-    const serializer = new JWTSerializer(instance(jwt), "secret-key");
+    const serializer = new JWTSerializer({
+      jwt: instance(jwt),
+      secretKey: "secret-key",
+    });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "Empty payload"
     );
@@ -57,7 +69,10 @@ describe("JWTSerializer", () => {
         callback(null, { someField: "test" });
       }
     );
-    const serializer = new JWTSerializer(instance(jwt), "secret-key");
+    const serializer = new JWTSerializer({
+      jwt: instance(jwt),
+      secretKey: "secret-key",
+    });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "No username in payload"
     );

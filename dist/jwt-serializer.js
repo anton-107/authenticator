@@ -56,15 +56,14 @@ class StandardJwtImplementation {
 }
 exports.StandardJwtImplementation = StandardJwtImplementation;
 class JWTSerializer {
-  constructor(jwt, secretKey) {
-    this.jwt = jwt;
-    this.secretKey = secretKey;
+  constructor(properties) {
+    this.properties = properties;
   }
   async generateAccessToken(username) {
     return new Promise((resolve, reject) => {
-      this.jwt.sign(
+      this.properties.jwt.sign(
         { username },
-        this.secretKey,
+        this.properties.secretKey,
         { expiresIn: 15 * 60 },
         (err, token) => {
           if (err) {
@@ -82,19 +81,23 @@ class JWTSerializer {
   }
   async decodeAccessToken(accessToken) {
     return new Promise((resolve, reject) => {
-      this.jwt.verify(accessToken, this.secretKey, (err, payload) => {
-        if (err) {
-          console.error("Error decoding token", err);
-          return reject("Invalid token payload");
+      this.properties.jwt.verify(
+        accessToken,
+        this.properties.secretKey,
+        (err, payload) => {
+          if (err) {
+            console.error("Error decoding token", err);
+            return reject("Invalid token payload");
+          }
+          if (!payload) {
+            return reject("Empty payload");
+          }
+          if (!payload["username"]) {
+            return reject("No username in payload");
+          }
+          resolve(payload["username"]);
         }
-        if (!payload) {
-          return reject("Empty payload");
-        }
-        if (!payload["username"]) {
-          return reject("No username in payload");
-        }
-        resolve(payload["username"]);
-      });
+      );
     });
   }
 }
