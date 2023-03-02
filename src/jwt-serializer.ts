@@ -1,6 +1,7 @@
-import { AuthTokensSerializer } from "./authenticator";
 import * as jwt from "jsonwebtoken";
 import { JwtPayload, Secret, SignCallback, SignOptions } from "jsonwebtoken";
+
+import { AuthTokensSerializer } from "./authenticator";
 
 export interface JWT {
   sign: (

@@ -1,5 +1,6 @@
-import { PasswordHashingFunction } from "./authenticator";
 import * as argon from "argon2";
+
+import { PasswordHashingFunction } from "./authenticator";
 
 export class Argon2HashingFunction implements PasswordHashingFunction {
   public async generateHash(password: string): Promise<string> {

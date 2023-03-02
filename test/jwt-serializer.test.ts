@@ -1,4 +1,5 @@
-import { mock, instance, when, anything } from "ts-mockito";
+import { anything,instance, mock, when } from "ts-mockito";
+
 import {
   JWT,
   JWTSerializer,

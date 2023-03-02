@@ -1,5 +1,6 @@
+import { randomBytes,scrypt } from "crypto";
+
 import { PasswordHashingFunction } from "./authenticator";
-import { scrypt, randomBytes } from "crypto";
 
 export function handleError(
   message: string,

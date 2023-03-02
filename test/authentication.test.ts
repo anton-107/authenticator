@@ -1,5 +1,4 @@
 import { Argon2HashingFunction } from "../src/argon2-hashing";
-import { ScryptHashingFunction } from "../src/scrypt-hashing";
 import {
   Authenticator,
   PasswordHashingFunction,
@@ -11,6 +10,7 @@ import {
   SimpleStringProvider,
   StandardJwtImplementation,
 } from "../src/jwt-serializer";
+import { ScryptHashingFunction } from "../src/scrypt-hashing";
 
 class TestUserStore implements UserStore {
   private users: User[] = [];
