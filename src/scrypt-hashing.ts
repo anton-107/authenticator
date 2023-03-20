@@ -1,4 +1,4 @@
-import { randomBytes,scrypt } from "crypto";
+import { randomBytes, scrypt } from "crypto";
 
 import { PasswordHashingFunction } from "./authenticator";
 
