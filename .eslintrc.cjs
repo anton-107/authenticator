@@ -11,7 +11,7 @@ module.exports = {
   rules: {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "no-console": "warn",
+    "no-console": "error",
     "no-duplicate-imports": "error",
     "@typescript-eslint/no-unused-vars": "error",
     "eslint-comments/no-unused-disable": "error",

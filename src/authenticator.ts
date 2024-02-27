@@ -78,7 +78,6 @@ export class Authenticator {
         accessToken: `jwt ${accessToken}`,
       };
     } catch (err) {
-      console.error("Error verifying hash or generating access token", err);
       return {
         isAuthenticated: false,
       };
@@ -94,7 +93,6 @@ export class Authenticator {
         username,
       };
     } catch (err) {
-      console.error("Authentication error", err);
       return {
         isAuthenticated: false,
         errorMessage: String(err),

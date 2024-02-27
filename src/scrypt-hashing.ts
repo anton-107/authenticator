@@ -10,7 +10,6 @@ export function handleError(
   if (error === null) {
     return;
   }
-  console.error(`Error: ${message}: ${error}`);
   reject(`Error: ${message}: ${error}`);
 }
 

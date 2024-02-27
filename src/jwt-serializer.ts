@@ -58,8 +58,7 @@ export class JWTSerializer implements AuthTokensSerializer {
     try {
       secretKey = await this.properties.secretKeyProvider.getSecretKey();
     } catch (err) {
-      console.error("Secret key provider error", err);
-      throw "Secret key provider error";
+      throw Error("Secret key provider error");
     }
 
     return new Promise((resolve, reject) => {
@@ -69,11 +68,9 @@ export class JWTSerializer implements AuthTokensSerializer {
         { expiresIn: 15 * 60 },
         (err, token) => {
           if (err) {
-            console.error("jwt sign result error", err);
             return reject("jwt signing failed");
           }
           if (token === undefined) {
-            console.error("jwt sign returned undefined string");
             return reject("jwt signing failed");
           }
           return resolve(token);
@@ -86,14 +83,12 @@ export class JWTSerializer implements AuthTokensSerializer {
     try {
       secretKey = await this.properties.secretKeyProvider.getSecretKey();
     } catch (err) {
-      console.error("Secret key provider error", err);
       throw "Secret key provider error";
     }
 
     return new Promise((resolve, reject) => {
       this.properties.jwt.verify(accessToken, secretKey, (err, payload) => {
         if (err) {
-          console.error("Error decoding token", err);
           return reject("Invalid token payload");
         }
         if (!payload) {
