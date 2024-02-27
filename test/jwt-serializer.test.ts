@@ -93,8 +93,8 @@ describe("JWTSerializer", () => {
       jwt: instance(jwt),
       secretKeyProvider: instance(secretKeyProvider),
     });
-    expect(() => serializer.generateAccessToken("user1")).rejects.toBe(
-      "Secret key provider error"
+    expect(() => serializer.generateAccessToken("user1")).rejects.toMatchObject(
+      Error("Secret key provider error")
     );
   });
   it("rejects token decoding on secret key provider error", () => {
@@ -107,8 +107,8 @@ describe("JWTSerializer", () => {
       jwt: instance(jwt),
       secretKeyProvider: instance(secretKeyProvider),
     });
-    expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
-      "Secret key provider error"
-    );
+    expect(() =>
+      serializer.decodeAccessToken("user1-token")
+    ).rejects.toMatchObject(Error("Secret key provider error"));
   });
 });

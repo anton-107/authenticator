@@ -83,7 +83,7 @@ export class JWTSerializer implements AuthTokensSerializer {
     try {
       secretKey = await this.properties.secretKeyProvider.getSecretKey();
     } catch (err) {
-      throw "Secret key provider error";
+      throw Error("Secret key provider error");
     }
 
     return new Promise((resolve, reject) => {
