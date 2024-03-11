@@ -42,6 +42,7 @@ export interface SecretKeyProvider {
 export interface JWTSerializerProperties {
   jwt: JWT;
   secretKeyProvider: SecretKeyProvider;
+  expiresInSeconds: number;
 }
 
 export class SimpleStringProvider implements SecretKeyProvider {
@@ -65,7 +66,7 @@ export class JWTSerializer implements AuthTokensSerializer {
       this.properties.jwt.sign(
         { username },
         secretKey,
-        { expiresIn: 15 * 60 },
+        { expiresIn: this.properties.expiresInSeconds },
         (err, token) => {
           if (err) {
             return reject("jwt signing failed");

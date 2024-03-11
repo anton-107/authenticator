@@ -25,6 +25,7 @@ class TestUserStore implements UserStore {
 const authTokensSerializer = new JWTSerializer({
   jwt: new StandardJwtImplementation(),
   secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+  expiresInSeconds: 15 * 60,
 });
 
 const hashingFunctions: { [name: string]: PasswordHashingFunction } = {

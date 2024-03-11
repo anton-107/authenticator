@@ -1,12 +1,12 @@
 import { RuntimeError } from "./runtime-error";
 
-interface SigninResult {
+export interface SigninResult {
   isAuthenticated: boolean;
   accessToken?: string;
   authenticationFailedReason?: string;
 }
 
-interface AuthenticationResult {
+export interface AuthenticationResult {
   isAuthenticated: boolean;
   username?: string;
   errorMessage?: string;

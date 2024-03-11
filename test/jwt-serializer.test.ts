@@ -18,6 +18,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.generateAccessToken("user1")).rejects.toBe(
       "jwt signing failed"
@@ -33,6 +34,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.generateAccessToken("user1")).rejects.toBe(
       "jwt signing failed"
@@ -48,6 +50,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "Invalid token payload"
@@ -63,6 +66,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "Empty payload"
@@ -78,6 +82,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: new SimpleStringProvider("some-secret-key"),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.decodeAccessToken("user1-token")).rejects.toBe(
       "No username in payload"
@@ -92,6 +97,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: instance(secretKeyProvider),
+      expiresInSeconds: 15 * 60,
     });
     expect(() => serializer.generateAccessToken("user1")).rejects.toMatchObject(
       Error("Secret key provider error")
@@ -106,6 +112,7 @@ describe("JWTSerializer", () => {
     const serializer = new JWTSerializer({
       jwt: instance(jwt),
       secretKeyProvider: instance(secretKeyProvider),
+      expiresInSeconds: 15 * 60,
     });
     expect(() =>
       serializer.decodeAccessToken("user1-token")
